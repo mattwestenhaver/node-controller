@@ -24,10 +24,6 @@ app.set('view engine', 'ejs');
 // sends the client directory
 app.use(express.static(__dirname + '/public'));
 
-app.get('/mobile', (req, res) => {
-  res.sendFile(__dirname + '/public/client.html');
-});
-
 // maps network interfaces to find the IP address
 Object.keys(ifaces).forEach((ifname) => {
   var alias = 0;
@@ -50,22 +46,27 @@ Object.keys(ifaces).forEach((ifname) => {
 });
 
 // generates url into QR Code
-QRCode.toDataURL((url + '/mobile') , (err, url) => {
+QRCode.toDataURL((url + '/control') , (err, url) => {
   qrURL = url
 })
 
-// passes QR Code data to desktop page
-app.get('/desktop', (req, res) => {
+// passes QR Code data to desktop page w/ EJS
+app.get('/', (req, res) => {
   res.render('desktop.ejs', {
     url: qrURL
   });
+});
+
+// controller view
+app.get('/control', (req, res) => {
+  res.render('client.ejs')
 });
 
 // socket.io connection
 io.on('connection', (socket) => {
 
   // client connects to socket
-  console.log('user connected');
+  console.log('user connected to socket');
 
   // client leaves current room and disconnects from socket
   socket.on('disconnect', function(){
@@ -75,27 +76,20 @@ io.on('connection', (socket) => {
 
   // client correctly inputs the password to enter room
   socket.on("changeRoom", (room) => {
-
     socket.leave();
     socket.room = room;
     socket.join(room);
     console.log('login successful')
-
-    // gets IDs of all clients in the 'vapt1' room
     var clients = io.sockets.adapter.rooms['vapt1'].sockets;  
-    // console.log('clients:', clients)
     opn("https://videos.virtualapt.com", { app: 'google chrome' })
-
   });
 
+  // mouse control commands
   socket.on('mouse', (pos) => {
-
     if (pos.cmd == 'move' || pos.cmd == 'scroll' || pos.cmd == 'drag') {
       mouse = robot.getMousePos();
-
       newX = mouse.x + pos.x * adjustment;
       newY = mouse.y + pos.y * adjustment;
-      
       robot.moveMouse(newX, newY);
       mouse = robot.getMousePos();
     } else if (pos.cmd == 'click') {
@@ -115,7 +109,6 @@ io.on('connection', (socket) => {
     } else if (pos.cmd == 'left') {
       robot.keyTap("left");
     }
-
   })
 
   socket.on("new user", (msg) => {
