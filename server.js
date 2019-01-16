@@ -100,22 +100,20 @@ io.on('connection', (socket) => {
       mouse = robot.getMousePos();
     } else if (pos.cmd == 'click') {
       robot.mouseClick();
-    }
-
-  })
-
-  socket.on('pi', () => {
-
-    robot.setMouseDelay(1);
-
-    var twoPI = Math.PI * 2.0;
-    var screenSize = robot.getScreenSize();
-    var height = (screenSize.height / 2) - 10;
-    var width = screenSize.width;
-
-    for (var x = 0; x < width; x++) {
-      y = height * Math.sin((twoPI * x) / width) + height;
-      robot.moveMouse(x, y);
+    } else if (pos.cmd == 'rightclick') {
+      robot.mouseClick('right');
+    } else if (pos.cmd == 'scrollstart') {
+      robot.mouseToggle('down', 'middle');
+    } else if (pos.cmd == 'scrollend') {
+      robot.mouseToggle('up', 'middle');
+    } else if (pos.cmd == 'dragstart') {
+      robot.mouseToggle('down', 'left');
+    } else if (pos.cmd == 'dragend') {
+      robot.mouseToggle('up', 'left');
+    } else if (pos.cmd == 'right') {
+      robot.keyTap("right");
+    } else if (pos.cmd == 'left') {
+      robot.keyTap("left");
     }
 
   })
@@ -128,5 +126,5 @@ io.on('connection', (socket) => {
 });
 
 http.listen(PORT, () => {
-  console.log(`listening on *:${PORT}`);
+  console.log(`🍻 listening on *:${PORT}`);
 });

@@ -11,10 +11,10 @@ var password = '';
 
 function makeid() {
   var poss = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  for (var i = 0; i < 5; i++) {
+  for (var i = 0; i < 4; i++) {
     password += poss.charAt(Math.floor(Math.random() * poss.length));
   }
-  $('#password-box').text(password)
+  $('#password-box').text("Password: " + password)
 }
 
 makeid()

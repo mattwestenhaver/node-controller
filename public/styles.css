@@ -1,3 +1,8 @@
+#password-box {
+  width: fit-content;
+  margin: 0 auto 15px auto;
+}
+
 #test-area {
   background-color: gray;
   display: none;
@@ -20,9 +25,23 @@
 }
 
 #desktop-qr h3 {
-  font-size: 1.7em;
+  font-size: 1.4em;
 }
 
 #desktop-qr img {
   width: 220px;
+}
+
+#client-input {
+  width: fit-content;
+  margin: 0 auto 5px auto;
+}
+
+input {
+  text-align: center;
+}
+
+#client-button {
+  width: fit-content;
+  margin: 0 auto;
 }
