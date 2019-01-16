@@ -22,3 +22,7 @@
 #desktop-qr h3 {
   font-size: 1.7em;
 }
+
+#desktop-qr img {
+  width: 220px;
+}

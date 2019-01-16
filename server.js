@@ -6,6 +6,7 @@ const
   robot = require('robotjs'),
   os = require('os'),
   opn = require('opn'),
+  QRCode = require('qrcode')
   PORT = process.env.PORT || 3000
 ;
 
@@ -16,16 +17,15 @@ var newX = null;
 var newY = null;
 var ifaces = os.networkInterfaces();
 var url = '';
+var qrURL = '';
+
+app.set('view engine', 'ejs');
 
 // sends the client directory
 app.use(express.static(__dirname + '/public'));
 
 app.get('/mobile', (req, res) => {
   res.sendFile(__dirname + '/public/client.html');
-});
-
-app.get('/desktop', (req, res) => {
-  res.sendFile(__dirname + '/public/desktop.html');
 });
 
 // maps network interfaces to find the IP address
@@ -48,7 +48,18 @@ Object.keys(ifaces).forEach((ifname) => {
     alias++;
   });
 });
-console.log("URL:", url)
+
+// generates url into QR Code
+QRCode.toDataURL((url + '/mobile') , (err, url) => {
+  qrURL = url
+})
+
+// passes QR Code data to desktop page
+app.get('/desktop', (req, res) => {
+  res.render('desktop.ejs', {
+    url: qrURL
+  });
+});
 
 // socket.io connection
 io.on('connection', (socket) => {
